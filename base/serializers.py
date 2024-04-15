@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Product, Order, OrderItem, ShippingAddress, Review, ProductImage
+from .models import Pet, Order, OrderItem, ShippingAddress, Trail, PetImage
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -38,27 +38,27 @@ class UserSerializerWithToken(UserSerializer):
         return str(token.access_token)
 
 
-class ReviewSerializer(serializers.ModelSerializer):
+class TrailSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Review
+        model = Trail
         fields = '__all__'
 
-class ProductImageSerializer(serializers.ModelSerializer):
+class PetImageSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ProductImage
+        model = PetImage
         fields = ['image']
 
-class ProductSerializer(serializers.ModelSerializer):
+class PetSerializer(serializers.ModelSerializer):
     reviews = serializers.SerializerMethodField(read_only=True)
-    images = ProductImageSerializer(many=True, read_only=True)
+    images = PetImageSerializer(many=True, read_only=True)
 
     class Meta:
-        model = Product
+        model = Pet
         fields = '__all__'
 
     def get_reviews(self, obj):
-        reviews = obj.review_set.all()
-        serializer = ReviewSerializer(reviews, many=True)
+        reviews = obj.trail_set.all()
+        serializer = TrailSerializer(reviews, many=True)
         return serializer.data
 
 

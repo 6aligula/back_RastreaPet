@@ -1,15 +1,15 @@
 from django.contrib import admin
 from .models import *
 
-class ProductImageInline(admin.StackedInline):
-    model = ProductImage
+class PetImageInline(admin.StackedInline):
+    model = PetImage
     extra = 1
 
-class ProductAdmin(admin.ModelAdmin):
-    inlines = [ProductImageInline, ]
+class PetAdmin(admin.ModelAdmin):
+    inlines = [PetImageInline, ]
 
-admin.site.register(Product, ProductAdmin)
-admin.site.register(Review)
+admin.site.register(Pet, PetAdmin)
+admin.site.register(Trail)
 admin.site.register(Order)
 admin.site.register(OrderItem)
 admin.site.register(ShippingAddress)
