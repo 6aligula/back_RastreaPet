@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from base.models import Pet
+from base.models import Pet, PetImage
 from base.serializers import PetSerializer
 
 from rest_framework import status
@@ -14,16 +14,28 @@ logger = logging.getLogger('base')
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def createPet(request):
-    logger.info(f"Usuario autenticado: {request.user}")
+    user = request.user
+    logger.info(f"Usuario autenticado: {user.email}")
     logger.info(f"Datos recibidos: {request.data}")
-    serializer = PetSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
+
+    # Extraer los datos que no son de archivo de request.data
+    pet_data = {key: value for key, value in request.data.items() if key != 'images'}
+
+    # Crear el serializador sin los datos de las imágenes
+    pet_serializer = PetSerializer(data=pet_data)
+    if pet_serializer.is_valid():
+        pet = pet_serializer.save()  # Guardamos la mascota para poder asociar las imágenes
+
+        # Procesar las imágenes separadamente
+        images_data = request.FILES.getlist('images')  # Obtener la lista de archivos de imagen
+        for image_file in images_data:
+            PetImage.objects.create(pet=pet, image=image_file)
+
         logger.info('Una nueva mascota ha sido registrada con éxito.')
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(pet_serializer.data, status=status.HTTP_201_CREATED)
     else:
         logger.warning('Intento fallido de registro de nueva mascota debido a datos inválidos.')
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(pet_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 def getPets(request):

@@ -133,3 +133,6 @@ venv.bak/
 data/
 # staticfiles
 staticfiles/
+
+# files
+media/
