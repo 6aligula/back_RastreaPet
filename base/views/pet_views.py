@@ -60,7 +60,7 @@ def getPets(request):
         'page': page,
         'pages': paginator.num_pages,
     })
-
+    
 @api_view(['GET'])
 def getPet(request, pk):
     try:
