@@ -21,6 +21,37 @@ def createPet(request):
     # Extraer los datos que no son de archivo de request.data
     pet_data = {key: value for key, value in request.data.items() if key != 'images'}
 
+    # Establecer el campo missing en True
+    pet_data['missing'] = True  # Aquí establecemos el campo missing como True
+
+    # Crear el serializador sin los datos de las imágenes
+    pet_serializer = PetSerializer(data=pet_data)
+    if pet_serializer.is_valid():
+        pet = pet_serializer.save()  # Guardamos la mascota para poder asociar las imágenes
+
+        # Procesar las imágenes separadamente
+        images_data = request.FILES.getlist('images')  # Obtener la lista de archivos de imagen
+        for image_file in images_data:
+            PetImage.objects.create(pet=pet, image=image_file)
+
+        logger.info('Una nueva mascota ha sido registrada con éxito.')
+        return Response(pet_serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        logger.warning('Intento fallido de registro de nueva mascota debido a datos inválidos.')
+        return Response(pet_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['POST'])
+def createPetFound(request):
+    #user = request.user
+    #logger.info(f"Usuario autenticado: {user.email}")
+    logger.info(f"Datos recibidos: {request.data}")
+
+    # Extraer los datos que no son de archivo de request.data
+    pet_data = {key: value for key, value in request.data.items() if key != 'images'}
+    
+    # Establecer el campo 
+    pet_data['name'] = "Sin Identificar"  # Aquí establecemos el campo missing como True
+    
     # Crear el serializador sin los datos de las imágenes
     pet_serializer = PetSerializer(data=pet_data)
     if pet_serializer.is_valid():
@@ -86,3 +117,22 @@ def getPet(request, pk):
     except Exception as e:
         logger.error(f'Ocurrió un error inesperado al acceder a la mascota con ID {pk}: {str(e)}')
         return Response({'detail': 'Ocurrió un error inesperado'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+# from PIL import Image
+# from PIL.ExifTags import TAGS, GPSTAGS
+
+# def get_image_exif_data(image_path):
+#     image = Image.open(image_path)
+#     exif_data = {
+#         TAGS[k]: v
+#         for k, v in image._getexif().items()
+#         if k in TAGS
+#     }
+    
+#     gps_info = {}
+#     for key in exif_data['GPSInfo'].keys():
+#         decode = GPSTAGS.get(key, key)
+#         gps_info[decode] = exif_data['GPSInfo'][key]
+
+#     return gps_info

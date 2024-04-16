@@ -29,7 +29,7 @@ class Pet(models.Model):
     _id = models.AutoField(primary_key=True, editable=False)
 
     def __str__(self):
-        return self.name
+        return self.name or "Unnamed Pet"
 
 class PetImage(models.Model):
     pet = models.ForeignKey(Pet, related_name='images', on_delete=models.CASCADE)
