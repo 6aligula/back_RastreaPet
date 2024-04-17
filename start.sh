@@ -22,7 +22,7 @@ fi
 
 # Ejecuta las migraciones de Django
 python manage.py makemigrations
-python manage.py migrate --noinput
+python manage.py migrate
 
 # Crea el superusuario de Django
 python manage.py shell < create_superuser.py

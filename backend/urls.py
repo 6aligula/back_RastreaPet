@@ -19,9 +19,8 @@ urlpatterns = [
     path('cart/<str:pk>', TemplateView.as_view(template_name='index.html')),
     path('cart', TemplateView.as_view(template_name='index.html')),
 
-    path('api/products/', include('base.urls.product_urls')),
+    path('api/pets/', include('base.urls.pets_urls')),
     path('api/users/', include('base.urls.user_urls')),
-    path('api/orders/', include('base.urls.order_urls')),
 
 ]
 
