@@ -71,12 +71,16 @@ def createPetFound(request):
 @api_view(['GET'])
 def getPets(request):
     query = request.query_params.get('keyword')
+    missing = request.query_params.get('missing')
     logger.info(f'Consulta recibida: {query}')
 
     if query == None:
         query = ''
 
     pets = Pet.objects.filter(name__icontains=query).order_by('_id')
+
+    if missing is not None:
+        pets = pets.filter(missing=missing.lower() in ['true', '1', 'yes'])
 
     page = request.query_params.get('page')
     logger.info(f'Página solicitada: {page}')
