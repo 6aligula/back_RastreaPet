@@ -59,8 +59,12 @@ def createPetFound(request):
 
         # Procesar las imágenes separadamente
         images_data = request.FILES.getlist('images')  # Obtener la lista de archivos de imagen
-        for image_file in images_data:
-            PetImage.objects.create(pet=pet, image=image_file)
+        if images_data:
+            for image_file in images_data:
+                PetImage.objects.create(pet=pet, image=image_file)
+        else:
+            # Si no hay imágenes enviadas, usar la imagen por defecto
+            PetImage.objects.create(pet=pet, image='pet_images/default.png')
 
         logger.info('Una nueva mascota ha sido registrada con éxito.')
         return Response(pet_serializer.data, status=status.HTTP_201_CREATED)
