@@ -36,7 +36,7 @@ services:
     depends_on:
       - nginx
     entrypoint: /bin/sh -c
-    command: 'trap exit TERM; while :; do certbot renew; sleep 12h & wait ${!}; done;'
+    command: 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'
   db:
     image: postgres:16
     volumes:
