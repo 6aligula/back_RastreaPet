@@ -188,3 +188,8 @@ LOGGING = {
         },
     },
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "https://backstore.online",
+    "https://www.backstore.online",
+]
