@@ -234,6 +234,7 @@ Despues de crear los certificados en la pagina de Zero ssl:
 ---------------------------------------------------------------------------
 Configuracio de nginx con zero ssl
 ---------------------------------------------------------------------------
+```bash
 server {
     listen 443 ssl;
     server_name backstore.online www.backstore.online;
@@ -270,8 +271,8 @@ server {
     ssl_session_cache shared:SSL:10m;
     ssl_session_timeout 10m;
 }
+```
 
-----------------------------------------
 docker-compose.yml
 --------------------------------------------
 ```yml
