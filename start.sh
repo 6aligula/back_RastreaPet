@@ -24,6 +24,9 @@ fi
 python manage.py makemigrations
 python manage.py migrate
 
+# Recolecta los archivos estáticos
+python manage.py collectstatic --noinput
+
 # Crea el superusuario de Django
 python manage.py shell < create_superuser.py
 
