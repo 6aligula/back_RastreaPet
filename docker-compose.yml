@@ -22,20 +22,12 @@ services:
       - ./nginx:/etc/nginx/conf.d
       - static_volume:/app/staticfiles
       - media_volume:/app/media
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot      
+    
     depends_on:
       - web
     networks:
       - app-network
-  certbot:
-    image: certbot/certbot
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    depends_on:
-      - nginx
-    command: certonly --webroot -w /var/www/certbot --email beratmosc@tuta.io -d backstore.online --agree-tos --staging
+  
   db:
     image: postgres:16
     volumes:
@@ -57,5 +49,3 @@ volumes:
   postgres-data:
   static_volume:
   media_volume:
-  certbot-conf:
-  certbot-www:
