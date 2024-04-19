@@ -27,6 +27,5 @@ python manage.py migrate
 # Crea el superusuario de Django
 python manage.py shell < create_superuser.py
 
-# Inicia el servidor de desarrollo de Django
-python manage.py runserver 0.0.0.0:8000
-
+# Inicia el servidor con Gunicorn
+gunicorn backend.wsgi:application --bind 0.0.0.0:8000
