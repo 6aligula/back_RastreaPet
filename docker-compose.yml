@@ -17,14 +17,26 @@ services:
     image: nginx:latest
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./nginx:/etc/nginx/conf.d
       - static_volume:/app/staticfiles
       - media_volume:/app/media
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot      
     depends_on:
       - web
     networks:
       - app-network
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    depends_on:
+      - nginx
+    entrypoint: /bin/sh -c
+    command: 'trap exit TERM; while :; do certbot renew; sleep 12h & wait ${!}; done;'
   db:
     image: postgres:16
     volumes:
@@ -46,3 +58,5 @@ volumes:
   postgres-data:
   static_volume:
   media_volume:
+  certbot-conf:
+  certbot-www:
