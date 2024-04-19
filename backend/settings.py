@@ -193,3 +193,4 @@ CORS_ALLOWED_ORIGINS = [
     "https://backstore.online",
     "https://www.backstore.online",
 ]
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
