@@ -22,8 +22,9 @@ services:
       - ./nginx:/etc/nginx/conf.d
       - static_volume:/app/staticfiles
       - media_volume:/app/media
-      - /etc/ssl/certs:/etc/ssl/certs:ro
-      - /etc/ssl/private:/etc/ssl/private:ro
+      - /etc/ssl/certs/certificate.crt:/etc/ssl/certificate.crt:ro
+      - /etc/ssl/certs/ca_bundle.crt:/etc/ssl/ca_bundle.crt:ro
+      - /etc/ssl/private/private.key:/etc/ssl/private.key:ro
     
     depends_on:
       - web
