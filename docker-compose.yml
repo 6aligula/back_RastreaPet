@@ -36,7 +36,7 @@ services:
     depends_on:
       - nginx
     entrypoint: /bin/sh -c
-    command: 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email beratmosc@tuta.io -d backstore.online --agree-tos
   db:
     image: postgres:16
     volumes:
