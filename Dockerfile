@@ -5,7 +5,7 @@ FROM python:3.8
 WORKDIR /app
 
 # Copia el contenido del directorio actual en el contenedor en /app
-ADD . /app
+COPY . /app
 
 # Instala las dependencias del proyecto
 RUN pip install -r requirements.txt
