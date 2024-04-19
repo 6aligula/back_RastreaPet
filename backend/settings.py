@@ -189,8 +189,5 @@ LOGGING = {
     },
 }
 
-CORS_ALLOWED_ORIGINS = [
-    "https://backstore.online",
-    "https://www.backstore.online",
-]
+CORS_ALLOWED_ORIGINS = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
