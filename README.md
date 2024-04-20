@@ -331,3 +331,19 @@ volumes:
   static_volume:
   media_volume:
 ```
+
+## Comportamiento en Reinicios del Contenedor
+
+Cada vez que el contenedor de Nginx se reinicie (ya sea debido a un reinicio manual, un fallo del contenedor, o un reinicio del sistema Docker), Docker ejecutará nuevamente todos los scripts en /docker-entrypoint.d/, lo que incluye tu script init-ssl.sh. Por lo tanto, fullchain.crt se reconstruirá en cada inicio del contenedor.
+
+## Ventajas de Este Enfoque
+
+* Actualización Automática: Cada vez que actualices tus certificados y reinicies el contenedor, los cambios en certificate.crt o ca_bundle.crt se reflejarán automáticamente en fullchain.crt.
+
+* Consistencia: Garantiza que siempre tengas la versión más actualizada de tus certificados en uso, evitando problemas de certificados caducados o desactualizados.
+
+## Consideraciones
+
+* Rendimiento: Aunque la operación de concatenar dos archivos es muy rápida, si tu contenedor se reinicia con mucha frecuencia, podrías considerar optimizar este proceso.
+
+* Seguridad: Asegúrate de que los certificados y claves sean almacenados y manejados de forma segura, especialmente en lo que respecta a los permisos de los archivos y su exposición a través de volúmenes.
