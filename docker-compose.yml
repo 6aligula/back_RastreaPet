@@ -6,7 +6,7 @@ services:
     volumes:
       - .:/app
       - static_volume:/app/staticfiles
-      - media_volume:/app/media
+      - ./media:/app/media
     env_file:
       - .env
     depends_on:
@@ -21,7 +21,7 @@ services:
       - "443:443"
     volumes:
       - static_volume:/app/staticfiles
-      - media_volume:/app/media
+      - ./media:/app/media
       - /etc/ssl/certs/certificate.crt:/etc/ssl/certificate.crt:ro
       - /etc/ssl/certs/ca_bundle.crt:/etc/ssl/ca_bundle.crt:ro
       - /etc/ssl/private/private.key:/etc/ssl/private.key:ro
@@ -52,5 +52,5 @@ networks:
 volumes:
   postgres-data:
   static_volume:
-  media_volume:
   nginx_logs:
+  media:
