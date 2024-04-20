@@ -239,11 +239,10 @@ server {
     listen 443 ssl;
     server_name backstore.online www.backstore.online;
 
-    ssl_certificate /etc/ssl/certificate.crt;
+    ssl_certificate /etc/ssl/fullchain.crt;
     ssl_certificate_key /etc/ssl/private.key;
+    ssl_trusted_certificate /etc/ssl/fullchain.crt;
 
-    # Concatena el certificado y la cadena de certificados
-    ssl_trusted_certificate /etc/ssl/ca_bundle.crt;
 
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_prefer_server_ciphers on;
@@ -252,14 +251,14 @@ server {
     # Configuración de las rutas como antes
     location / {
         proxy_pass http://web:8000;
-        proxy_set_header Host $host;
+        proxy_set_header Host $http_host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
     client_max_body_size 10M;
-    
+
     location /static/ {
         alias /app/staticfiles/;
     }
@@ -292,12 +291,12 @@ services:
     networks:
       - app-network
   nginx:
-    image: nginx:latest
+    build:
+      context: ./nginx
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx:/etc/nginx/conf.d
       - static_volume:/app/staticfiles
       - media_volume:/app/media
       - /etc/ssl/certs/certificate.crt:/etc/ssl/certificate.crt:ro
@@ -330,6 +329,20 @@ volumes:
   postgres-data:
   static_volume:
   media_volume:
+```
+## Creacion del Dockerfile para nginx
+
+```yml
+# Utiliza la imagen oficial de Nginx como base
+FROM nginx:latest
+
+# Copia la configuración de Nginx y el script de inicio
+COPY myproject.conf /etc/nginx/conf.d/default.conf
+COPY init-ssl.sh /docker-entrypoint.d/init-ssl.sh
+
+# Asegura que el script de inicio sea ejecutable
+RUN chmod +x /docker-entrypoint.d/init-ssl.sh
+
 ```
 
 ## Comportamiento en Reinicios del Contenedor
