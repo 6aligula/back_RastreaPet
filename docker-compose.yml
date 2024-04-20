@@ -25,6 +25,7 @@ services:
       - /etc/ssl/certs/certificate.crt:/etc/ssl/certificate.crt:ro
       - /etc/ssl/certs/ca_bundle.crt:/etc/ssl/ca_bundle.crt:ro
       - /etc/ssl/private/private.key:/etc/ssl/private.key:ro
+      - ./nginx_logs:/var/log/nginx
     
     depends_on:
       - web
@@ -52,3 +53,4 @@ volumes:
   postgres-data:
   static_volume:
   media_volume:
+  nginx_logs:
