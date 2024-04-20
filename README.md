@@ -360,3 +360,65 @@ Cada vez que el contenedor de Nginx se reinicie (ya sea debido a un reinicio man
 * Rendimiento: Aunque la operación de concatenar dos archivos es muy rápida, si tu contenedor se reinicia con mucha frecuencia, podrías considerar optimizar este proceso.
 
 * Seguridad: Asegúrate de que los certificados y claves sean almacenados y manejados de forma segura, especialmente en lo que respecta a los permisos de los archivos y su exposición a través de volúmenes.
+
+
+### Pagina para comprobar que los SSL son correctos:
+```bash
+https://www.ssllabs.com/
+```
+Tambien se puede probar a hacer un curl:
+
+```bash
+curl -v https://backstore.online/api/pets/?page=1&missing=true
+```
+Respuesta ok:
+
+```bash
+*   Trying 158.179.213.157:443...
+* Connected to backstore.online (158.179.213.157) port 443 (#0)
+* ALPN: offers h2,http/1.1
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+*  CAfile: /etc/ssl/certs/ca-certificates.crt
+*  CApath: /etc/ssl/certs
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+* TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
+* TLSv1.3 (IN), TLS handshake, Certificate (11):
+* TLSv1.3 (IN), TLS handshake, CERT verify (15):
+* TLSv1.3 (IN), TLS handshake, Finished (20):
+* TLSv1.3 (OUT), TLS change cipher, Change cipher spec (1):
+* TLSv1.3 (OUT), TLS handshake, Finished (20):
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384
+* ALPN: server accepted http/1.1
+* Server certificate:
+*  subject: CN=backstore.online
+*  start date: Apr 19 00:00:00 2024 GMT
+*  expire date: Jul 18 23:59:59 2024 GMT
+*  subjectAltName: host "backstore.online" matched cert's "backstore.online"
+*  issuer: C=AT; O=ZeroSSL; CN=ZeroSSL RSA Domain Secure Site CA
+*  SSL certificate verify ok.
+* using HTTP/1.1
+> GET /api/pets/?page=1 HTTP/1.1
+> Host: backstore.online
+> User-Agent: curl/7.88.1
+> Accept: */*
+> 
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+* old SSL session ID is stale, removing
+< HTTP/1.1 200 OK
+< Server: nginx/1.25.5
+< Date: Sat, 20 Apr 2024 13:37:24 GMT
+< Content-Type: application/json
+< Content-Length: 30
+< Connection: keep-alive
+< Vary: Accept, Origin
+< Allow: GET, OPTIONS
+< X-Frame-Options: DENY
+< X-Content-Type-Options: nosniff
+< Referrer-Policy: same-origin
+< Cross-Origin-Opener-Policy: same-origin
+< 
+* Connection #0 to host backstore.online left intact
+{"pets":[],"page":1,"pages":1}
+
+```
