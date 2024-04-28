@@ -422,3 +422,107 @@ Respuesta ok:
 {"pets":[],"page":1,"pages":1}
 
 ```
+
+## Añadir seguridad a nginx
+Modificar el archivo /etc/nginx/nginx.conf añadiendo esta linea:
+
+```bash
+    limit_req_zone $binary_remote_addr zone=mylimit:10m rate=10r/m;
+```
+/etc/nginx/nginx.conf
+```bash
+user  nginx;
+worker_processes  auto;
+
+error_log  /var/log/nginx/error.log notice;
+pid        /var/run/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    limit_req_zone $binary_remote_addr zone=mylimit:10m rate=10r/m;
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    keepalive_timeout  65;
+
+    #gzip  on;
+
+    include /etc/nginx/conf.d/*.conf;
+}
+```
+
+## Configuración de nginx nueva
+
+myproject.conf
+
+```bash
+server {
+    listen 443 ssl;
+    server_name backstore.online www.backstore.online;
+
+    ssl_certificate /etc/ssl/fullchain.crt;
+    ssl_certificate_key /etc/ssl/private.key;
+    ssl_trusted_certificate /etc/ssl/fullchain.crt;
+
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
+
+    # Bloquear acceso directo a la raíz exacta
+    location = / {
+        return 404;
+    }
+    # Bloquear rutas no deseadas
+    location ~* (\.git|cgi-bin|cf_scripts|geoserver|favicon\.ico|robots\.txt) {
+        return 404;
+    }
+
+    location ~* \.min\.js$ {
+        return 404;
+    }
+
+    # Configuración de las rutas como antes
+    location / {
+        limit_req zone=mylimit burst=20;
+        proxy_pass http://web:8000;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /api/ {
+        limit_req zone=mylimit burst=20;
+        proxy_pass http://web:8000;
+    }
+
+    client_max_body_size 10M;
+
+    location /static/ {
+        alias /app/staticfiles/;
+    }
+    location /media/ {
+        alias /app/media/;
+    }
+
+    # Otras configuraciones SSL para mejorar la seguridad
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+}
+
+```
