@@ -120,7 +120,7 @@ def updateUserProfile(request):
 
     if not is_password_strong(password):
         logger.warning(f'Usuario {user.username} intentó actualizar con una contraseña débil.')
-        return Response({'detail': 'Contraseña débil, debe contener minúsculas, mayúsculas, números y caracteres especiales'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'Contraseña débil, debe contener minúsculas, mayúsculas, números y caracteres especialess'}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         user.first_name = name
