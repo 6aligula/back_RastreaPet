@@ -21,7 +21,9 @@ services:
       - "443:443"
     volumes:
       - static_volume:/app/staticfiles
-      - media_volume:/app/media
+      - ./media:/app/media
+      - ./nginx_logs:/var/log/nginx
+    
     depends_on:
       - web
     networks:
@@ -47,4 +49,5 @@ networks:
 volumes:
   postgres-data:
   static_volume:
-  media_volume:
+  nginx_logs:
+  media:
