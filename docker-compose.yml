@@ -21,12 +21,7 @@ services:
       - "443:443"
     volumes:
       - static_volume:/app/staticfiles
-      - ./media:/app/media
-      - /etc/ssl/certs/certificate.crt:/etc/ssl/certificate.crt:ro
-      - /etc/ssl/certs/ca_bundle.crt:/etc/ssl/ca_bundle.crt:ro
-      - /etc/ssl/private/private.key:/etc/ssl/private.key:ro
-      - ./nginx_logs:/var/log/nginx
-    
+      - media_volume:/app/media
     depends_on:
       - web
     networks:
@@ -52,5 +47,4 @@ networks:
 volumes:
   postgres-data:
   static_volume:
-  nginx_logs:
-  media:
+  media_volume:
