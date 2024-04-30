@@ -5,12 +5,24 @@ services:
     build: .
     volumes:
       - .:/app
-    ports:
-      - "8000:8000"
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
     env_file:
       - .env
     depends_on:
       - db
+    networks:
+      - app-network
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    depends_on:
+      - web
     networks:
       - app-network
   db:
@@ -32,3 +44,5 @@ networks:
 
 volumes:
   postgres-data:
+  static_volume:
+  media_volume:
