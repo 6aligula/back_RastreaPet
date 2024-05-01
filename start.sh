@@ -30,5 +30,5 @@ python manage.py collectstatic --noinput
 # Crea el superusuario de Django
 python manage.py shell < create_superuser.py
 
-# Inicia el servidor con Gunicorn
-gunicorn backend.wsgi:application --bind 0.0.0.0:8000
+# Inicia el servidor con daphne
+daphne -p 8000 -b 0.0.0.0 backend.asgi:application
