@@ -7,6 +7,9 @@ WORKDIR /app
 # Copia el contenido del directorio actual en el contenedor en /app
 COPY . /app
 
+# Actualizar pip
+RUN pip install --upgrade pip
+
 # Instala las dependencias del proyecto
 RUN pip install -r requirements.txt
 

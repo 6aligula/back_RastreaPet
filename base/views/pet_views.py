@@ -7,6 +7,7 @@ from base.models import Pet, PetImage
 from base.serializers import PetSerializer
 
 from rest_framework import status
+from django.core.cache import cache
 import logging
 
 logger = logging.getLogger('base')
@@ -74,44 +75,42 @@ def createPetFound(request):
 
 @api_view(['GET'])
 def getPets(request):
-    query = request.query_params.get('keyword')
+    query = request.query_params.get('keyword', '')
     missing = request.query_params.get('missing')
+    page = request.query_params.get('page', 1)
+
+    cache_key = f'pets-{query}-{missing}-{page}'
+    cached_pets = cache.get(cache_key)
+
+    if cached_pets is not None:
+        logger.info('Devolviendo datos desde la caché.')
+        return Response(cached_pets)
+
     logger.info(f'Consulta recibida: {query}')
-
-    if query == None:
-        query = ''
-
     pets = Pet.objects.filter(name__icontains=query).order_by('_id')
 
     if missing is not None:
         pets = pets.filter(missing=missing.lower() in ['true', '1', 'yes'])
 
-    page = request.query_params.get('page')
-    logger.info(f'Página solicitada: {page}')
-    
     paginator = Paginator(pets, 8)
-
     try:
         pets = paginator.page(page)
     except PageNotAnInteger:
-        logger.warning("Número de página no válido; mostrando la primera página.")
         pets = paginator.page(1)
     except EmptyPage:
-        logger.warning("Número de página fuera de rango; mostrando la última página.")
         pets = paginator.page(paginator.num_pages)
 
-    if page == None:
-        page = 1
-
-    page = int(page)
-
     serializer = PetSerializer(pets, many=True)
-    return Response({
+    result = {
         'pets': serializer.data,
-        'page': page,
+        'page': int(page),
         'pages': paginator.num_pages,
-    })
-    
+    }
+
+    # Cachear el resultado antes de devolverlo
+    cache.set(cache_key, result, timeout=300)  # Tiempo en segundos, ajusta según tus necesidades
+    return Response(result)
+  
 @api_view(['GET'])
 def getPet(request, pk):
     try:

@@ -1,3 +1,4 @@
+# settings.py
 import environ
 import os
 from datetime import timedelta
@@ -102,7 +103,6 @@ TEMPLATES = [
     },
 ]
 
-# WSGI_APPLICATION = 'backend.wsgi.application'
 ASGI_APPLICATION = "backend.asgi.application"
 
 DATABASES = {
@@ -188,3 +188,22 @@ LOGGING = {
         },
     },
 }
+
+# Configuración de Redis como Caché
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+# Configuración de Redis para Sesiones
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
+# Configuración de Redis con Celery
+CELERY_BROKER_URL = "redis://redis:6379/2"
+CELERY_RESULT_BACKEND = "redis://redis:6379/2"

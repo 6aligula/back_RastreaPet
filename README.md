@@ -422,3 +422,17 @@ Respuesta ok:
 {"pets":[],"page":1,"pages":1}
 
 ```
+
+# Conectarme al contenedor de redis
+```bash
+docker exec -it backrastreapet_redis_1 redis-cli
+```
+Test:
+```bash
+127.0.0.1:6379> set test hello
+OK
+127.0.0.1:6379> get test
+"hello"
+127.0.0.1:6379> keys *
+1) "test"
+```

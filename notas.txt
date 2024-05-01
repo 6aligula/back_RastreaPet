@@ -3,11 +3,12 @@ version: '3.9'
 services:
   redis:
     image: redis:7.2
+    ports:
+      - "6379:6379"
     volumes:
       - redis-data:/data
     command: redis-server --appendonly yes
-    networks:
-      - app-network
+  
   web:
     build: .
     volumes:
@@ -21,6 +22,7 @@ services:
       - redis
     networks:
       - app-network
+  
   nginx:
     build:
       context: ./nginx
@@ -31,12 +33,11 @@ services:
       - static_volume:/app/staticfiles
       - ./media:/app/media
       - ./nginx_logs:/var/log/nginx
-    
     depends_on:
       - web
     networks:
       - app-network
-  
+
   db:
     image: postgres:16
     volumes:
@@ -46,6 +47,21 @@ services:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - app-network
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=secret
+    depends_on:
+      - db
+      - redis
     networks:
       - app-network
 
@@ -60,3 +76,4 @@ volumes:
   nginx_logs:
   media:
   redis-data:
+  grafana-data:
