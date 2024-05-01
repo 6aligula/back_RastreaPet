@@ -113,18 +113,25 @@ def getPets(request):
   
 @api_view(['GET'])
 def getPet(request, pk):
+    cache_key = f'pet-{pk}'
+    cached_pet = cache.get(cache_key)
+
+    if cached_pet is not None:
+        logger.info(f'Devolviendo mascota desde la caché para ID {pk}.')
+        return Response(cached_pet)
+
     try:
         pet = Pet.objects.get(_id=pk)
-        logger.info(f'Mascota con ID {pk} ha sido accedido.')
         serializer = PetSerializer(pet, many=False)
+        logger.info(f'Mascota con ID {pk} ha sido accedido.')
+        cache.set(cache_key, serializer.data, timeout=300)  # Ajusta el timeout según tus necesidades
         return Response(serializer.data)
     except Pet.DoesNotExist:
         logger.warning(f'Intento de acceso a una mascota no existente con ID {pk}.')
         return Response({'detail': 'Mascota no encontrada'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         logger.error(f'Ocurrió un error inesperado al acceder a la mascota con ID {pk}: {str(e)}')
-        return Response({'detail': 'Ocurrió un error inesperado'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+        return Response({'detail': 'Ocurrió un error inesperado'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)   
 
 # from PIL import Image
 # from PIL.ExifTags import TAGS, GPSTAGS
