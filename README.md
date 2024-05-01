@@ -436,3 +436,31 @@ OK
 127.0.0.1:6379> keys *
 1) "test"
 ```
+
+# Probar en vio de mensajes:
+Instalar websocat en debian
+```bash
+docker pull solsson/websocat
+```
+### Conectarme a la room test:
+```bash
+docker run --rm -it solsson/websocat ws://192.168.1.165/ws/chat/test/
+```
+Recibiendo mensaje desde postman:
+```bash
+{"message": "Hola, Paco"}
+```
+
+### Enviar Mensajes de Forma No Interactiva
+Si quieres enviar un solo mensaje y luego cerrar la conexión, puedes hacerlo usando echo y un pipe en Unix/Linux. Este método es útil para scripts o cuando no necesitas una sesión interactiva abierta.
+
+```bash
+echo '{"message": "Hola, Paco"}' | docker run --rm -i solsson/websocat ws://192.168.1.165/ws/chat/test/
+```
+### Enviar y recibir mensajes de forma interactiva
+```bash
+docker run --rm -it solsson/websocat ws://192.168.1.165/ws/chat/test/
+{"message": "Hola, Manolo"}
+{"message": "Hola, Manolo"}
+{"message": "Hola, Paco"}
+```

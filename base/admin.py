@@ -10,6 +10,4 @@ class PetAdmin(admin.ModelAdmin):
 
 admin.site.register(Pet, PetAdmin)
 admin.site.register(Trail)
-admin.site.register(Order)
-admin.site.register(OrderItem)
-admin.site.register(ShippingAddress)
+admin.site.register(Message)

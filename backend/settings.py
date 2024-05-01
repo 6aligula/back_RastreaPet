@@ -207,3 +207,13 @@ SESSION_CACHE_ALIAS = "default"
 # Configuración de Redis con Celery
 CELERY_BROKER_URL = "redis://redis:6379/2"
 CELERY_RESULT_BACKEND = "redis://redis:6379/2"
+
+# Configuración de channels
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('redis', 6379)],
+        },
+    },
+}

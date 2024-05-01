@@ -26,3 +26,5 @@ whitenoise==6.3.0
 django-redis==5.4.0
 Daphne==3.0.0
 celery==5.3
+channels==3.0.4
+channels_redis==3.4.0
